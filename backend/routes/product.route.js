@@ -6,17 +6,16 @@ import {
   getSingleProduct,
   updateProduct,
 } from "../controllers/product.controller.js";
-import { verifyToken } from "../middleware/authToken.js";
+import { authorizedRole, verifyToken } from "../middleware/authToken.js";
 
 const router = express.Router();
 
+router.get("/products", getAllProducts);
+router.post("/new", verifyToken, authorizedRole("admin"), createProduct);
 router
   .route("/product/:id")
   .get(getSingleProduct)
-  .put(verifyToken, updateProduct)
-  .delete(verifyToken, deleteProduct);
-
-router.post("/new", verifyToken, createProduct);
-router.get("/products", verifyToken, getAllProducts);
+  .put(verifyToken, authorizedRole("admin"), updateProduct)
+  .delete(verifyToken, authorizedRole("admin"), deleteProduct);
 
 export default router;

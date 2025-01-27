@@ -15,3 +15,17 @@ export const verifyToken = asyncHandler(async (req, res, next) => {
   req.user = await User.findById(decodeToken.id);
   next();
 });
+
+export const authorizedRole = (...role) => {
+  return (req, res, next) => {
+    if (!role.includes(req.user.role)) {
+      return next(
+        errorHandler(
+          403,
+          `Role: ${req.user.role} is allowed to access this resource`
+        )
+      );
+    }
+    next();
+  };
+};
